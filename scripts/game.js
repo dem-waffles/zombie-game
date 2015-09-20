@@ -1,41 +1,47 @@
 'use strict';
 
-var Player = function (x, y) {
+var Player = function (x, y, world) {
 	var _x = x;
 	var _y = y;
-	var speed = 15;
-	// stores the <div> element associated with this player
-	var element;
+	var _size = 5;
+	var _speed = 15;
 
-	var addToDom = function () {
-		element = document.createElement('div');
-		element.className = 'player';
-		document.body.appendChild(element);
-		update();
+	var draw = function () {
+		world.context.beginPath();
+		world.context.fillStyle = '#000000';
+		world.context.arc(_x, _y, _size, 0, 2 * Math.PI);
+		world.context.fill();
+		world.context.closePath();
 	};
+
+	var erase = function () {
+		world.context.beginPath();
+		world.context.fillStyle = '#FFFFFF';
+		world.context.arc(_x, _y, _size + 1, 0, 2 * Math.PI);
+		world.context.fill();
+		world.context.closePath();
+	}
 
 	var setupEvents = function () {
 		document.onkeydown = function (e) {
 			e = e || window.event;
-			if (parseInt(e.keyCode) === 37) {
-				_x -= speed;
-			} else if (parseInt(e.keyCode) === 39) {
-				_x += speed;
-			} else if (parseInt(e.keyCode) === 38) {
-				_y -= speed;
-			} else if (parseInt(e.keyCode) === 40) {
-				_y += speed;
+			if ([37, 38, 39, 40].indexOf(parseInt(e.keyCode)) !== -1) {
+				erase();
 			}
-			update();
+			if (parseInt(e.keyCode) === 37) {
+				_x -= _speed;
+			} else if (parseInt(e.keyCode) === 39) {
+				_x += _speed;
+			} else if (parseInt(e.keyCode) === 38) {
+				_y -= _speed;
+			} else if (parseInt(e.keyCode) === 40) {
+				_y += _speed;
+			}
+			draw();
 		};
 	};
-
-	var update = function () {
-		element.style.left = _x + 'px';
-		element.style.top = _y + 'px';
-	};
 	
-	addToDom();
+	draw();
 	setupEvents();
 
 	return {
@@ -43,8 +49,16 @@ var Player = function (x, y) {
 	};
 };
 
-var ZombieGame = function () {
-	var player = new Player(0, 0);
+var ZombieGame = function (canvasid) {
+	var background = '#FFFFFF'
+	var canvas = document.getElementById(canvasid);
+	var context = canvas.getContext('2d');
+	canvas.style.background = background;
+	var world = {
+		canvas: canvas,
+		context: context
+	};
+	var player = new Player(0, 0, world);
 };
 
-var game = new ZombieGame();
+var game = new ZombieGame('gamecanvas');
