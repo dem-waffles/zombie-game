@@ -71,7 +71,7 @@ var Zombie = function (x, y, world) {
 		world.context.arc(_x, _y, _size + 1, 0, 2 * Math.PI);
 		world.context.fill();
 		world.context.closePath();
-	}
+	};
 
 	var move = function () {
 		erase();
@@ -86,10 +86,12 @@ var Zombie = function (x, y, world) {
 			_y += _speed;
 		}
 		draw();
-	}
+	};
 	
 	draw();
-	setInterval(function () {move()}, _move_speed);
+	setInterval(function () {
+		move();
+	}, _move_speed);
 	
 };
 
