@@ -54,8 +54,8 @@ var Zombie = function (x, y, world) {
 	var _y = y;
 	var _size = 5;
 	var _speed = 10; 
-	var _activity = 6; //How often the zombie doesn't move. Must be at least 3.
-	var _move_speed = 1500; //How often in milliseconds the zombie moves
+	var _activity = 10; //How often the zombie doesn't move. Must be at least 3.
+	var _move_speed = 100; //How often in milliseconds the zombie moves
 
 	var draw = function () {
 		world.context.beginPath();
@@ -76,13 +76,13 @@ var Zombie = function (x, y, world) {
 	var move = function () {
 		erase();
 		var rand = Math.floor(Math.random() * _activity);
-		if(rand == 0 && _x-_speed >= 0){
+		if(rand == 0 && (_x+_size)-_speed > 0){
 			_x -= _speed;
-		}else if(rand == 1 && _x+_speed <= world.canvas.width){
+		}else if(rand == 1 && (_x+_size)+_speed < parseInt(world.canvas.width)) {
 			_x += _speed;
-		}else if(rand == 2 && _y-_speed >= 0){
+		}else if(rand == 2 && (_y+_size)-_speed > 0){
 			_y -= _speed;
-		}else if(rand == 3 && _y+_speed <= world.canvas.height){
+		}else if(rand == 3 && (_y+_size)+_speed < parseInt(world.canvas.height)) {
 			_y += _speed;
 		}
 		draw();
@@ -94,10 +94,16 @@ var Zombie = function (x, y, world) {
 };
 
 var ZombieGame = function (canvasid) {
-	var background = '#FFFFFF'
+	var properties = {
+		background: '#FFFFFF',
+		width: 500,
+		height: 500
+	};
 	var canvas = document.getElementById(canvasid);
 	var context = canvas.getContext('2d');
-	canvas.style.background = background;
+	canvas.style.background = properties.background;
+	canvas.setAttribute('width', properties.width);
+	canvas.setAttribute('height', properties.height);
 	var world = {
 		canvas: canvas,
 		context: context
@@ -108,12 +114,11 @@ var ZombieGame = function (canvasid) {
 			var z = new Zombie(Math.floor((Math.random() * canvas.width) + 50), Math.floor((Math.random() * canvas.height) + 50), world)
 			zom.push("a");
 		}
+		return zom;
 	}
 	
 	var player = new Player(5, 5, world);
 	var zombies = addZombies(12);
-	
-	
 	
 };
 
