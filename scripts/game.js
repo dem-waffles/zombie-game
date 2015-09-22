@@ -76,13 +76,13 @@ var Zombie = function (x, y, world) {
 	var move = function () {
 		erase();
 		var rand = Math.floor(Math.random() * _activity);
-		if(rand == 0 && (_x+_size)-_speed > 0){
+		if(rand == 0 && _x-_speed >= 0){
 			_x -= _speed;
-		}else if(rand == 1 && (_x+_size)+_speed < parseInt(world.canvas.width)) {
+		}else if(rand == 1 && _x+_speed <= parseInt(world.canvas.width)) {
 			_x += _speed;
-		}else if(rand == 2 && (_y+_size)-_speed > 0){
+		}else if(rand == 2 && _y-_speed >= 0){ 
 			_y -= _speed;
-		}else if(rand == 3 && (_y+_size)+_speed < parseInt(world.canvas.height)) {
+		}else if(rand == 3 && _y+_speed <= parseInt(world.canvas.height)) {
 			_y += _speed;
 		}
 		draw();
@@ -112,9 +112,11 @@ var ZombieGame = function (canvasid) {
 	};
 	var addZombies = function (number) {
 		var zom = [];
-		for (var i = 0; i < number; i++) { 
-			var z = new Zombie(Math.floor((Math.random() * canvas.width) + 50), Math.floor((Math.random() * canvas.height) + 50), world)
-			zom.push("a");
+		for (var i = 0; i < number; i++) {
+			var x = Math.floor((Math.random() * canvas.width) + 50);
+			var y = Math.floor((Math.random() * canvas.height) + 50);
+			var z = new Zombie(x, y, world);
+			zom.push(z);
 		}
 		return zom;
 	}
