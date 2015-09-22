@@ -1,10 +1,12 @@
 'use strict';
 
-var Player = function (x, y, world) {
+var Player = function (x, y, world, w, h) {
 	var _x = x;
 	var _y = y;
 	var _size = 5;
-	var _speed = 15;
+	var _speed = 10; 
+	var _canvas_w = w;
+	var _canvas_h = h;
 
 	var draw = function () {
 		world.context.beginPath();
@@ -28,13 +30,13 @@ var Player = function (x, y, world) {
 			if ([37, 38, 39, 40].indexOf(parseInt(e.keyCode)) !== -1) {
 				erase();
 			}
-			if (parseInt(e.keyCode) === 37) {
+			if (parseInt(e.keyCode) === 37 && _x-_speed >= 0) {
 				_x -= _speed;
-			} else if (parseInt(e.keyCode) === 39) {
+			} else if (parseInt(e.keyCode) === 39 && _x+_speed <= _canvas_w) {	
 				_x += _speed;
-			} else if (parseInt(e.keyCode) === 38) {
+			} else if (parseInt(e.keyCode) === 38 && _y-_speed >= 0) {
 				_y -= _speed;
-			} else if (parseInt(e.keyCode) === 40) {
+			} else if (parseInt(e.keyCode) === 40 && _y+_speed <= _canvas_h) {
 				_y += _speed;
 			}
 			draw();
@@ -58,7 +60,7 @@ var ZombieGame = function (canvasid) {
 		canvas: canvas,
 		context: context
 	};
-	var player = new Player(0, 0, world);
+	var player = new Player(5, 5, world, canvas.width, canvas.height);
 };
 
 var game = new ZombieGame('gamecanvas');
