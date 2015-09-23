@@ -4,7 +4,8 @@ var Player = function (x, y, world) {
 	var _x = x;
 	var _y = y;
 	var _size = 5;
-	var _speed = 10; 
+	var _speed = 10;
+	var _acceleration = -.25;
 
 	var draw = function () {
 		world.context.beginPath();
@@ -27,6 +28,7 @@ var Player = function (x, y, world) {
 			e = e || window.event;
 			if ([37, 38, 39, 40].indexOf(parseInt(e.keyCode)) !== -1) {
 				e.preventDefault();
+				_speed += _acceleration;
 				erase();
 			}
 			if (parseInt(e.keyCode) === 37 && _x-_speed >= 0) {
@@ -39,6 +41,9 @@ var Player = function (x, y, world) {
 				_y += _speed;
 			}
 			draw();
+		};
+		document.onkeyup = function (e) {
+			_speed = 10;
 		};
 	};
 	
@@ -62,9 +67,13 @@ var Zombie = function (x, y, world) {
 	var _x = x;
 	var _y = y;
 	var _size = 5;
-	var _speed = 10; 
-	var _activity = 10; //How often the zombie doesn't move. Must be at least 3.
-	var _move_speed = 100; //How often in milliseconds the zombie moves
+	var _speed = 5; 
+	// How often the zombie doesn't move. Must be at least 3.
+	var _activity = 10;
+	// How often in milliseconds the zombie moves
+	var _move_speed = 100;
+	// the mode of the zombie
+	var _random_walk = true, _player;
 
 	var draw = function () {
 		world.context.beginPath();
@@ -82,8 +91,7 @@ var Zombie = function (x, y, world) {
 		world.context.closePath();
 	};
 
-	var move = function () {
-		erase();
+	var randomWalk = function () {
 		var rand = Math.floor(Math.random() * _activity);
 		if(rand == 0){
 			if(_x-_speed <= 0){
@@ -110,6 +118,30 @@ var Zombie = function (x, y, world) {
 				_y += _speed;
 			}
 		}
+	};
+
+	var chase = function () {
+		if (_x < _player.getX()) {
+			_x += _speed;
+		}
+		if (_y < _player.getY()) {
+			_y += _speed;
+		}
+		if (_x > _player.getX()) {
+			_x -= _speed;
+		}
+		if (_y > _player.getY()) {
+			_y -= _speed;
+		}
+	};
+
+	var move = function () {
+		erase();
+		if (_random_walk) {
+			randomWalk();
+		} else {
+			chase();
+		}
 		draw();
 	};
 	
@@ -126,6 +158,14 @@ var Zombie = function (x, y, world) {
 		},
 		getSize: function () {
 			return _size;
+		},
+		stalk: function (player) {
+			_player = player;
+			_random_walk = false;
+		},
+		randomWalk: function () {
+			_player = null;
+			_random_walk = true;
 		}
 	};
 };
@@ -134,10 +174,15 @@ var checkCollisions = function (game) {
 	var player = game.getPlayer();
 	var zombies = game.getZombies();
 	for (var i in zombies) {
-		if (Math.sqrt(Math.pow(zombies[i].getX() - player.getX(), 2) + Math.pow(zombies[i].getY() - player.getY(), 2) ) <= zombies[i].getSize() + player.getSize()) {
+		if (Math.sqrt(Math.pow(zombies[i].getX() - player.getX(), 2) + Math.pow(zombies[i].getY() - player.getY(), 2)) <= zombies[i].getSize() + player.getSize()) {
 			alert('u ded. score: ' + game.getScore());
 			location.reload();
-		} 
+		}
+		if (Math.sqrt(Math.pow(zombies[i].getX() - player.getX(), 2) + Math.pow(zombies[i].getY() - player.getY(), 2)) <= game.getProperties().chaseRadius) {
+			zombies[i].stalk(player);
+		} else {
+			zombies[i].randomWalk();
+		}
 	}
 };
 
@@ -145,7 +190,8 @@ var ZombieGame = function (canvasid) {
 	var properties = {
 		background: '#FFFFFF',
 		width: window.innerWidth - 25,
-		height: window.innerHeight - 100
+		height: window.innerHeight - 100,
+		chaseRadius: 200
 	};
 	var score = 0;
 	setInterval(function () {
@@ -184,6 +230,9 @@ var ZombieGame = function (canvasid) {
 		},
 		getScore: function () {
 			return score;
+		},
+		getProperties: function () {
+			return properties;
 		}
 	};
 };
