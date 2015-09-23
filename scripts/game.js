@@ -131,6 +131,47 @@ var Zombie = function (x, y, world) {
 	};
 };
 
+var Collectible = function (x, y, world) {
+	var _x = x;
+	var _y = y;
+	var _size = 5;
+	var _speed = 10; 
+	var _activity = 10; //How often the zombie doesn't move. Must be at least 3.
+	var _move_speed = 100; //How often in milliseconds the zombie moves
+	var that = this;
+
+	var draw = function () {
+		world.context.beginPath();
+		world.context.fillStyle = 'green';
+		world.context.arc(_x, _y, _size, 0, 2 * Math.PI);
+		world.context.fill();
+		world.context.closePath();
+	};
+
+	var erase = function () {
+		world.context.beginPath();
+		world.context.fillStyle = '#FFFFFF';
+		world.context.arc(_x, _y, _size + 1, 0, 2 * Math.PI);
+		world.context.fill();
+		world.context.closePath();
+	};
+	
+	draw();
+	
+	return {
+		getX: function () {
+			return _x;
+		},
+		getY: function () {
+			return _y;
+		},
+		getSize: function () {
+			return _size;
+		}
+	};
+};
+
+
 var checkCollisions = function (game) {
 	var player = game.getPlayer();
 	var zombies = game.getZombies();
