@@ -228,7 +228,7 @@ var Collectible = function (x, y, world) {
 var checkCollisions = function (game) {
 	var player = game.getPlayer();
 	var zombies = game.getZombies();
-	var collectibles = game.getCollectibles();
+	var collectible = game.getCollectible();
 	for (var i in zombies) {
 		if (Math.sqrt(Math.pow(zombies[i].getX() - player.getX(), 2) + Math.pow(zombies[i].getY() - player.getY(), 2)) <= zombies[i].getSize() + player.getSize()) {
 			alert('u ded. score: ' + game.getScore());
@@ -240,12 +240,12 @@ var checkCollisions = function (game) {
 			zombies[i].randomWalk();
 		}
 	}
-	for (var i in collectibles) {
-		if (Math.sqrt(Math.pow(collectibles[i].getX() - player.getX(), 2) + Math.pow(collectibles[i].getY() - player.getY(), 2) ) <= collectibles[i].getSize() + player.getSize()) {
-			game.addToScore(10);
-			game.removeCollectible(collectibles[i]);
-		} 
-	}
+	
+	if (Math.sqrt(Math.pow(collectible.getX() - player.getX(), 2) + Math.pow(collectible.getY() - player.getY(), 2) ) <= collectible.getSize() + player.getSize()) {
+		game.addToScore(10);
+		game.pickupCollectible();
+	} 
+
 };
 
 var ZombieGame = function (canvasid) {
@@ -292,13 +292,11 @@ var ZombieGame = function (canvasid) {
 		addZombie();
 	}, 10000);
 	
-	var collects = [];
-	setInterval(function () {
-		var x = Math.floor((Math.random() * canvas.width) + 50);
-		var y = Math.floor((Math.random() * canvas.height) + 50);
-		var z = new Collectible(x, y, world);
-		collects.push(z);
-	}, 6000);
+
+	var x = Math.floor((Math.random() * canvas.width));
+	var y = Math.floor((Math.random() * canvas.height));
+	var collect = new Collectible(x, y, world);
+	
 	
 	
 	
@@ -316,16 +314,18 @@ var ZombieGame = function (canvasid) {
 		getProperties: function () {
 			return properties;
 		},
-		getCollectibles: function () {
-			return collects;
+		getCollectible: function () {
+			return collect;
 		},
 		addToScore: function(newScore) {
 			score += newScore;
 			document.getElementById('score').innerHTML = score;
 		},
-		removeCollectible: function (toRemove) {
-			collects.pop(toRemove);
-			toRemove.doErase();
+		pickupCollectible: function (toRemove) {
+			collect.doErase();
+			var x = Math.floor((Math.random() * canvas.width));
+			var y = Math.floor((Math.random() * canvas.height));
+			collect = new Collectible(x, y, world);
 		},
 		increaseChaseRadius: function (amount) {
 			properties.chaseRadius += amount;
