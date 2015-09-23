@@ -114,8 +114,8 @@ var Zombie = function (x, y, world) {
 var ZombieGame = function (canvasid) {
 	var properties = {
 		background: '#FFFFFF',
-		width: 500,
-		height: 500
+		width: window.innerWidth - 25,
+		height: window.innerHeight - 100
 	};
 	var canvas = document.getElementById(canvasid);
 	var context = canvas.getContext('2d');
