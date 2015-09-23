@@ -191,9 +191,11 @@ var ZombieGame = function (canvasid) {
 		background: '#FFFFFF',
 		width: window.innerWidth - 25,
 		height: window.innerHeight - 100,
-		chaseRadius: 200
+		chaseRadius: 100,
+		numZombies: 15
 	};
 	var score = 0;
+
 	document.getElementById('score').innerHTML = score;
 	setInterval(function () {
 		score++;
@@ -208,19 +210,23 @@ var ZombieGame = function (canvasid) {
 		canvas: canvas,
 		context: context
 	};
-	var addZombies = function (number) {
-		var zom = [];
-		for (var i = 0; i < number; i++) {
-			var x = Math.floor((Math.random() * canvas.width) + 50);
-			var y = Math.floor((Math.random() * canvas.height) + 50);
-			var z = new Zombie(x, y, world);
-			zom.push(z);
-		}
-		return zom;
-	};
-	
+	var zombies = [];
 	var player = new Player(5, 5, world);
-	var zombies = addZombies(12);
+
+	var addZombie = function () {
+		var x = Math.floor((Math.random() * canvas.width) + 50);
+		var y = Math.floor((Math.random() * canvas.height) + 50);
+		var z = new Zombie(x, y, world);
+		zombies.push(z);
+	}
+
+	for (var i = 0; i < properties.numZombies; i++) {
+		addZombie();
+	}
+
+	setInterval(function () {
+		addZombie();
+	}, 10000);
 
 	return {
 		getPlayer: function () {
