@@ -170,9 +170,50 @@ var Zombie = function (x, y, world) {
 	};
 };
 
+var Collectible = function (x, y, world) {
+	var _x = x;
+	var _y = y;
+	var _size = 5;
+
+	var draw = function () {
+		world.context.beginPath();
+		world.context.fillStyle = 'green';
+		world.context.arc(_x, _y, _size, 0, 2 * Math.PI);
+		world.context.fill();
+		world.context.closePath();
+	};
+
+	var erase = function () {
+		world.context.beginPath();
+		world.context.fillStyle = '#FFFFFF';
+		world.context.arc(_x, _y, _size + 1, 0, 2 * Math.PI);
+		world.context.fill();
+		world.context.closePath();
+	};
+	
+	draw();
+	
+	return {
+		getX: function () {
+			return _x;
+		},
+		getY: function () {
+			return _y;
+		},
+		getSize: function () {
+			return _size;
+		},
+		doErase: function () {
+			erase();
+		}
+	};
+};
+
+
 var checkCollisions = function (game) {
 	var player = game.getPlayer();
 	var zombies = game.getZombies();
+	var collectibles = game.getCollectibles();
 	for (var i in zombies) {
 		if (Math.sqrt(Math.pow(zombies[i].getX() - player.getX(), 2) + Math.pow(zombies[i].getY() - player.getY(), 2)) <= zombies[i].getSize() + player.getSize()) {
 			alert('u ded. score: ' + game.getScore());
@@ -183,6 +224,12 @@ var checkCollisions = function (game) {
 		} else {
 			zombies[i].randomWalk();
 		}
+	}
+	for (var i in collectibles) {
+		if (Math.sqrt(Math.pow(collectibles[i].getX() - player.getX(), 2) + Math.pow(collectibles[i].getY() - player.getY(), 2) ) <= collectibles[i].getSize() + player.getSize()) {
+			game.addToScore(10);
+			game.removeCollectible(collectibles[i]);
+		} 
 	}
 };
 
@@ -227,6 +274,14 @@ var ZombieGame = function (canvasid) {
 	setInterval(function () {
 		addZombie();
 	}, 10000);
+	
+	var collects = [];
+	setInterval(function () {
+		var x = Math.floor((Math.random() * canvas.width) + 50);
+		var y = Math.floor((Math.random() * canvas.height) + 50);
+		var z = new Collectible(x, y, world);
+		collects.push(z);
+	}, 6000);
 
 	return {
 		getPlayer: function () {
@@ -240,6 +295,16 @@ var ZombieGame = function (canvasid) {
 		},
 		getProperties: function () {
 			return properties;
+		},
+		getCollectibles: function () {
+			return collects;
+		},
+		addToScore: function(newScore) {
+			score += newScore;
+		},
+		removeCollectible: function (toRemove) {
+			collects.pop(toRemove);
+			toRemove.doErase();
 		}
 	};
 };
