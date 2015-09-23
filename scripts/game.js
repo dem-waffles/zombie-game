@@ -148,6 +148,10 @@ var ZombieGame = function (canvasid) {
 		width: window.innerWidth - 25,
 		height: window.innerHeight - 100
 	};
+	var score = 0;
+	setInterval(function () {
+		score++;
+	}, 1000);
 	var canvas = document.getElementById(canvasid);
 	var context = canvas.getContext('2d');
 	canvas.style.background = properties.background;
