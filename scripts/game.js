@@ -65,7 +65,6 @@ var Zombie = function (x, y, world) {
 	var _speed = 10; 
 	var _activity = 10; //How often the zombie doesn't move. Must be at least 3.
 	var _move_speed = 100; //How often in milliseconds the zombie moves
-	var that = this;
 
 	var draw = function () {
 		world.context.beginPath();
@@ -177,7 +176,7 @@ var checkCollisions = function (game) {
 	var zombies = game.getZombies();
 	for (var i in zombies) {
 		if (Math.sqrt(Math.pow(zombies[i].getX() - player.getX(), 2) + Math.pow(zombies[i].getY() - player.getY(), 2) ) <= zombies[i].getSize() + player.getSize()) {
-			alert('u ded');
+			alert('u ded. score: ' + game.getScore());
 			location.reload();
 		} 
 	}
@@ -192,6 +191,7 @@ var ZombieGame = function (canvasid) {
 	var score = 0;
 	setInterval(function () {
 		score++;
+		document.getElementById('score').innerHTML = score;
 	}, 1000);
 	var canvas = document.getElementById(canvasid);
 	var context = canvas.getContext('2d');
@@ -222,6 +222,9 @@ var ZombieGame = function (canvasid) {
 		},
 		getZombies: function () {
 			return zombies;
+		},
+		getScore: function () {
+			return score;
 		}
 	};
 };
@@ -230,4 +233,4 @@ var game = new ZombieGame('gamecanvas');
 
 setInterval(function () {
 	checkCollisions(game);
-}, 100);
+}, 10);
