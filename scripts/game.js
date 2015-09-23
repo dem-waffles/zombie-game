@@ -31,6 +31,7 @@ var Player = function (x, y, world) {
 				e.preventDefault();
 				if (_speed > 0) {
 					_speed += _acceleration;
+					drawEnergy();
 				}
 				erase();
 			}
@@ -49,6 +50,11 @@ var Player = function (x, y, world) {
 			_speed = 10;
 		};
 	};
+	
+	var drawEnergy = function () {
+		world.context.fillStyle = '#000000';
+		world.context.fillRect(20,20,150,100);
+	}
 	
 	draw();
 	setupEvents();
@@ -240,12 +246,12 @@ var ZombieGame = function (canvasid) {
 	var properties = {
 		background: '#FFFFFF',
 		width: window.innerWidth - 25,
-		height: window.innerHeight - 100,
+		height: window.innerHeight - 100 - document.getElementById('instructions').clientHeight - document.getElementById('title').clientHeight,
 		chaseRadius: 100,
 		numZombies: 15
 	};
 	var score = 0;
-
+	
 	document.getElementById('score').innerHTML = score;
 	document.getElementById('chase-radius').innerHTML = properties.chaseRadius;
 	setInterval(function () {
@@ -287,6 +293,9 @@ var ZombieGame = function (canvasid) {
 		var z = new Collectible(x, y, world);
 		collects.push(z);
 	}, 6000);
+	
+	
+	
 
 	return {
 		getPlayer: function () {
@@ -317,6 +326,7 @@ var ZombieGame = function (canvasid) {
 			document.getElementById('chase-radius').innerHTML = properties.chaseRadius;
 		}
 	};
+	
 };
 
 var CheatPrevention = {
