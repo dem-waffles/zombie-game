@@ -134,10 +134,6 @@ var Collectible = function (x, y, world) {
 	var _x = x;
 	var _y = y;
 	var _size = 5;
-	var _speed = 10; 
-	var _activity = 10; //How often the zombie doesn't move. Must be at least 3.
-	var _move_speed = 100; //How often in milliseconds the zombie moves
-	var that = this;
 
 	var draw = function () {
 		world.context.beginPath();
@@ -166,6 +162,9 @@ var Collectible = function (x, y, world) {
 		},
 		getSize: function () {
 			return _size;
+		},
+		doErase: function () {
+			erase();
 		}
 	};
 };
@@ -174,10 +173,17 @@ var Collectible = function (x, y, world) {
 var checkCollisions = function (game) {
 	var player = game.getPlayer();
 	var zombies = game.getZombies();
+	var collectibles = game.getCollectibles();
 	for (var i in zombies) {
 		if (Math.sqrt(Math.pow(zombies[i].getX() - player.getX(), 2) + Math.pow(zombies[i].getY() - player.getY(), 2) ) <= zombies[i].getSize() + player.getSize()) {
 			alert('u ded. score: ' + game.getScore());
 			location.reload();
+		} 
+	}
+	for (var i in collectibles) {
+		if (Math.sqrt(Math.pow(collectibles[i].getX() - player.getX(), 2) + Math.pow(collectibles[i].getY() - player.getY(), 2) ) <= collectibles[i].getSize() + player.getSize()) {
+			game.addToScore(10);
+			game.removeCollectible(collectibles[i]);
 		} 
 	}
 };
@@ -215,6 +221,14 @@ var ZombieGame = function (canvasid) {
 	
 	var player = new Player(5, 5, world);
 	var zombies = addZombies(12);
+	
+	var collects = [];
+	setInterval(function () {
+		var x = Math.floor((Math.random() * canvas.width) + 50);
+		var y = Math.floor((Math.random() * canvas.height) + 50);
+		var z = new Collectible(x, y, world);
+		collects.push(z);
+	}, 6000);
 
 	return {
 		getPlayer: function () {
@@ -225,6 +239,16 @@ var ZombieGame = function (canvasid) {
 		},
 		getScore: function () {
 			return score;
+		},
+		getCollectibles: function () {
+			return collects;
+		},
+		addToScore: function(newScore) {
+			score += newScore;
+		},
+		removeCollectible: function (toRemove) {
+			collects.pop(toRemove);
+			toRemove.doErase();
 		}
 	};
 };
