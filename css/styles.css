@@ -32,6 +32,21 @@ body {
 	animation-timing-function: linear;
 }
 
+.points{
+	font-size: 20px;
+	padding-top: 20px;
+}
+
+.prompt{
+	margin: 0px 20% 0px 20%;
+	padding: 10px;
+	text-align: center;
+	background-color: white;
+	color: black;
+	border: 2px solid black;
+	margin-bottom: 20px;
+}
+
 @keyframes title{
 	0% {
 		transform: rotateY(0deg);

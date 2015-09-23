@@ -148,6 +148,7 @@ var ZombieGame = function (canvasid) {
 		height: window.innerHeight - 100
 	};
 	var score = 0;
+	document.getElementById('score').innerHTML = score;
 	setInterval(function () {
 		score++;
 		document.getElementById('score').innerHTML = score;
