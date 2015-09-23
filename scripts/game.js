@@ -194,6 +194,7 @@ var ZombieGame = function (canvasid) {
 		chaseRadius: 200
 	};
 	var score = 0;
+	document.getElementById('score').innerHTML = score;
 	setInterval(function () {
 		score++;
 		document.getElementById('score').innerHTML = score;
