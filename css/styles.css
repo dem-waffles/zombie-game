@@ -32,6 +32,11 @@ body {
 	animation-timing-function: linear;
 }
 
+.welcome{
+	text-decoration: underline;
+	padding-bottom: 10px;
+}
+
 .points{
 	font-size: 20px;
 	padding-top: 20px;
