@@ -1,4 +1,4 @@
-'use strict';
+// 'use strict';
 
 var Player = function (x, y, world) {
 	var _x = x;
@@ -26,6 +26,7 @@ var Player = function (x, y, world) {
 		document.onkeydown = function (e) {
 			e = e || window.event;
 			if ([37, 38, 39, 40].indexOf(parseInt(e.keyCode)) !== -1) {
+				e.preventDefault();
 				erase();
 			}
 			if (parseInt(e.keyCode) === 37 && _x-_speed >= 0) {
@@ -45,7 +46,15 @@ var Player = function (x, y, world) {
 	setupEvents();
 
 	return {
-		// an API to interact with the player instance
+		getX: function () {
+			return _x;
+		},
+		getY: function () {
+			return _y;
+		},
+		getSize: function () {
+			return _size;
+		}
 	};
 };
 
@@ -53,7 +62,7 @@ var Zombie = function (x, y, world) {
 	var _x = x;
 	var _y = y;
 	var _size = 5;
-	var _speed = 30; 
+	var _speed = 10; 
 	var _activity = 10; //How often the zombie doesn't move. Must be at least 3.
 	var _move_speed = 100; //How often in milliseconds the zombie moves
 
@@ -108,7 +117,29 @@ var Zombie = function (x, y, world) {
 	setInterval(function () {
 		move();
 	}, _move_speed);
-	
+	return {
+		getX: function () {
+			return _x;
+		},
+		getY: function () {
+			return _y;
+		},
+		getSize: function () {
+			return _size;
+		}
+	};
+};
+
+var checkCollisions = function (game) {
+
+	var player = game.getPlayer();
+	var zombies = game.getZombies();
+	for (var i in zombies) {
+		if (Math.sqrt(Math.pow(zombies[i].getX() - player.getX(), 2) + Math.pow(zombies[i].getY() - player.getY(), 2) ) <= zombies[i].getSize() + player.getSize()) {
+			alert('u ded');
+			game.reset();
+		} 
+	}
 };
 
 var ZombieGame = function (canvasid) {
@@ -119,6 +150,7 @@ var ZombieGame = function (canvasid) {
 	};
 	var canvas = document.getElementById(canvasid);
 	var context = canvas.getContext('2d');
+	var player, zombies;
 	canvas.style.background = properties.background;
 	canvas.setAttribute('width', properties.width);
 	canvas.setAttribute('height', properties.height);
@@ -137,9 +169,33 @@ var ZombieGame = function (canvasid) {
 		return zom;
 	}
 	
-	var player = new Player(5, 5, world);
-	var zombies = addZombies(12);
-	
+	var reset = function () {
+		for (var i in zombies) {
+			delete zombies[i];
+		}
+		delete player;
+		zombies = [];
+		context.clearRect(0, 0, canvas.width, canvas.height);
+		player = new Player(5, 5, world);
+		zombies = addZombies(12);
+	};
+	reset();
+
+	return {
+		getPlayer: function () {
+			return player;
+		},
+		getZombies: function () {
+			return zombies;
+		},
+		reset: function () {
+			reset();
+		}
+	};
 };
 
 var game = new ZombieGame('gamecanvas');
+
+setInterval(function () {
+	checkCollisions(game);
+}, 100);
