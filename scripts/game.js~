@@ -94,7 +94,7 @@ var Zombie = function (x, y, world) {
 			}else{
 				_y -= _speed;
 			}
-		}else if(rand == 3) {
+		}else if(rand == 3 && _y+_speed <= parseInt(world.canvas.height)) {
 			if(_y+_speed >= parseInt(world.canvas.width)){
 				_y = (parseInt(world.canvas.width) - _size);
 			}else{
