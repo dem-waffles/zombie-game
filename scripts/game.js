@@ -306,6 +306,7 @@ var ZombieGame = function (canvasid) {
 		},
 		addToScore: function(newScore) {
 			score += newScore;
+			document.getElementById('score').innerHTML = score;
 		},
 		removeCollectible: function (toRemove) {
 			collects.pop(toRemove);
