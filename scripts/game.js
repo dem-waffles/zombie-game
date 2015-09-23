@@ -5,8 +5,10 @@ var Player = function (x, y, world) {
 	var _y = y;
 	var _size = 5;
 	var _speed = 10;
+	var _maxspeed = 10; // Keep this the same as speed
 	// make player tired
 	var _acceleration = -.25;
+	var _bar_size = 150;
 
 	var draw = function () {
 		world.context.beginPath();
@@ -48,15 +50,19 @@ var Player = function (x, y, world) {
 		};
 		document.onkeyup = function (e) {
 			_speed = 10;
+			drawEnergy();
 		};
 	};
 	
 	var drawEnergy = function () {
-		world.context.fillStyle = '#000000';
-		world.context.fillRect(20,20,150,100);
+		world.context.fillStyle = 'lightgreen';
+		world.context.fillRect(world.canvas.width - _bar_size,0,_bar_size*_maxspeed,20);
+		world.context.fillStyle = 'green';
+		world.context.fillRect(world.canvas.width - _bar_size,0,_bar_size*(_speed/_maxspeed),20);
 	}
 	
 	draw();
+	drawEnergy();
 	setupEvents();
 
 	return {
