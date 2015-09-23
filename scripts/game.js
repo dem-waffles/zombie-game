@@ -5,6 +5,7 @@ var Player = function (x, y, world) {
 	var _y = y;
 	var _size = 5;
 	var _speed = 10;
+	// make player tired
 	var _acceleration = -.25;
 
 	var draw = function () {
@@ -28,7 +29,9 @@ var Player = function (x, y, world) {
 			e = e || window.event;
 			if ([37, 38, 39, 40].indexOf(parseInt(e.keyCode)) !== -1) {
 				e.preventDefault();
-				_speed += _acceleration;
+				if (_speed > 0) {
+					_speed += _acceleration;
+				}
 				erase();
 			}
 			if (parseInt(e.keyCode) === 37 && _x-_speed >= 0) {
@@ -244,6 +247,7 @@ var ZombieGame = function (canvasid) {
 	var score = 0;
 
 	document.getElementById('score').innerHTML = score;
+	document.getElementById('chase-radius').innerHTML = properties.chaseRadius;
 	setInterval(function () {
 		score++;
 		document.getElementById('score').innerHTML = score;
@@ -265,6 +269,7 @@ var ZombieGame = function (canvasid) {
 		var y = Math.floor((Math.random() * canvas.height) + 50);
 		var z = new Zombie(x, y, world);
 		zombies.push(z);
+		document.getElementById('num-zombies').innerHTML = zombies.length;
 	}
 
 	for (var i = 0; i < properties.numZombies; i++) {
@@ -305,8 +310,28 @@ var ZombieGame = function (canvasid) {
 		removeCollectible: function (toRemove) {
 			collects.pop(toRemove);
 			toRemove.doErase();
+		},
+		increaseChaseRadius: function (amount) {
+			properties.chaseRadius += amount;
+			document.getElementById('chase-radius').innerHTML = properties.chaseRadius;
 		}
 	};
+};
+
+var CheatPrevention = {
+	oldCoordinates: {
+		x: 5,
+		y: 5
+	},
+	checkNotCamping: function (game) {
+		if (game.getPlayer().getX() === CheatPrevention.oldCoordinates.x && game.getPlayer().getY() === CheatPrevention.oldCoordinates.y) {
+			game.increaseChaseRadius(50);
+		}
+		CheatPrevention.oldCoordinates = {
+			x: game.getPlayer().getX(),
+			y: game.getPlayer().getY()
+		};
+	}
 };
 
 var game = new ZombieGame('gamecanvas');
@@ -314,3 +339,8 @@ var game = new ZombieGame('gamecanvas');
 setInterval(function () {
 	checkCollisions(game);
 }, 10);
+
+setInterval(function () {
+	CheatPrevention.checkNotCamping(game);
+}, 5000);
+
