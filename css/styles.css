@@ -8,3 +8,29 @@
 body {
 	background: #DDDDDD;
 }
+
+.game-title{
+	position: relative;
+	width: 250px;
+	animation-name: title;
+	animation-duration: 6s;
+	animation-iteration-count: infinite;
+}
+
+@keyframes title{
+	0% {
+		color: black;
+		left: 0px;
+		top: 0px;
+		}
+	50%{
+		color: red;
+		left: 300px;
+		top: 0px;
+	}
+	100%{
+		color: black;
+		left: 0px;
+		top: 0px;
+	}
+}
