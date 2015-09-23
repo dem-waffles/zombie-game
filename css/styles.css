@@ -11,12 +11,21 @@
 
 body {
 	background: #DDDDDD;
+	background: url(http://img4.wikia.nocookie.net/__cb20121217171932/theamazingworldofgumball/images/f/fc/Nomnom.gif) top repeat;
+
+}
+
+#gamecanvas{
+	border: 2px solid black;
 }
 
 .game-title{
 	text-align: center;
 	position: relative;
 	width: 250px;
+	background-color: lightgray;
+	border: 2px solid black;
+	padding: 5px;
 	animation-name: title;
 	animation-duration: 10s;
 	animation-iteration-count: infinite;
