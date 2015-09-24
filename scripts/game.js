@@ -1,5 +1,17 @@
 'use strict';
 
+//shows instructions
+var show = function(){
+	document.getElementById('shown').style.display = "block";
+	document.getElementById('hidden').style.display = "none";
+}
+
+//hides instructions
+var hide = function(){
+	document.getElementById('shown').style.display = "none";
+	document.getElementById('hidden').style.display = "block";
+}
+
 var Player = function (x, y, world) {
 	var _x = x;
 	var _y = y;
@@ -31,7 +43,7 @@ var Player = function (x, y, world) {
 			e = e || window.event;
 			if ([37, 38, 39, 40].indexOf(parseInt(e.keyCode)) !== -1) {
 				e.preventDefault();
-				if (_speed > 0) {
+				if (_speed > 4) {
 					_speed += _acceleration;
 					drawEnergy();
 				}
@@ -239,20 +251,22 @@ var checkCollisions = function (game) {
 		} else {
 			zombies[i].randomWalk();
 		}
+		if(Math.sqrt(Math.pow(zombies[i].getX() - collectible.getX(), 2) + Math.pow(zombies[i].getY() - collectible.getY(), 2)) <= zombies[i].getSize() + collectible.getSize()) {
+			game.moveCollectable();
+		}
 	}
 	
 	if (Math.sqrt(Math.pow(collectible.getX() - player.getX(), 2) + Math.pow(collectible.getY() - player.getY(), 2) ) <= collectible.getSize() + player.getSize()) {
 		game.addToScore(10);
 		game.pickupCollectible();
 	} 
-
 };
 
 var ZombieGame = function (canvasid) {
 	var properties = {
 		background: '#FFFFFF',
 		width: window.innerWidth - 25,
-		height: window.innerHeight - 100 - document.getElementById('instructions').clientHeight - document.getElementById('title').clientHeight,
+		height: window.innerHeight - 150 - document.getElementById('title').clientHeight,
 		chaseRadius: 100,
 		numZombies: 15
 	};
@@ -279,6 +293,12 @@ var ZombieGame = function (canvasid) {
 	var addZombie = function () {
 		var x = Math.floor((Math.random() * canvas.width) + 50);
 		var y = Math.floor((Math.random() * canvas.height) + 50);
+		if(x > canvas.width){
+			x = x - 50;
+		}
+		if(y > canvas.height){
+			y = y - 50;
+		}
 		var z = new Zombie(x, y, world);
 		zombies.push(z);
 		document.getElementById('num-zombies').innerHTML = zombies.length;
@@ -287,11 +307,6 @@ var ZombieGame = function (canvasid) {
 	for (var i = 0; i < properties.numZombies; i++) {
 		addZombie();
 	}
-
-	setInterval(function () {
-		addZombie();
-	}, 10000);
-	
 
 	var x = Math.floor((Math.random() * canvas.width));
 	var y = Math.floor((Math.random() * canvas.height));
@@ -326,6 +341,13 @@ var ZombieGame = function (canvasid) {
 			var x = Math.floor((Math.random() * canvas.width));
 			var y = Math.floor((Math.random() * canvas.height));
 			collect = new Collectible(x, y, world);
+			addZombie();
+		},
+		moveCollectable: function (){
+			collect.doErase();
+			var x = Math.floor((Math.random() * canvas.width));
+			var y = Math.floor((Math.random() * canvas.height));
+			collect = new Collectible(x, y, world);
 		},
 		increaseChaseRadius: function (amount) {
 			properties.chaseRadius += amount;
@@ -335,6 +357,7 @@ var ZombieGame = function (canvasid) {
 	
 };
 
+//makes zombies chase you from farther away if you stay in one place too long
 var CheatPrevention = {
 	oldCoordinates: {
 		x: 5,
